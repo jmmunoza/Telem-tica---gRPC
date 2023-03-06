@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service InventoryService {
+    rpc getAll(ProductListRequest) returns (stream Product) {}
+    rpc add(Product) returns (google.protobuf.Empty) {}
+    rpc get(ProductRetrieveRequest) returns (Product) {}
+    rpc update(Product) returns (Product) {}
+    rpc delete(Product) returns (google.protobuf.Empty) {}
+}
+
+message Product {
+    int32 produtct_id = 1;
+    string name       = 2;
+    int32 price       = 3;
+}
+
+message ProductListRequest {
+}
+
+message ProductRetrieveRequest {
+    int32 produtct_id = 1;
+}
