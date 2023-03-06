@@ -18,18 +18,41 @@ const order_management_service = grpc.loadPackageDefinition(package_definition).
 const client = new order_management_service(ORDER_MANAGEMENT_SERVICE_ADDRESS, grpc.credentials.createInsecure());
 
 exports.get = (req, res) => {
-    const id = req.params.id;
-	res.json({"233" : id});
+	client.get(req.params, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 };
 
 exports.add = (req, res) => {
-    res.json({"sexual" : "ssss"});
+    client.add(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 }
 
 exports.update = (req, res) => {
-    res.json({"sexual" : "ss33333ss"});
+    client.update(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 }
 
 exports.delete = (req, res) => {
-    res.json({"sexual" : "12ssss"});
+    client.delete(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 }

@@ -18,8 +18,11 @@ const payment_service = grpc.loadPackageDefinition(package_definition).PaymentSe
 const client = new payment_service(PAYMENT_SERVICE_ADDRESS, grpc.credentials.createInsecure());
 
 exports.payorder = (req, res) => {
-    //const id = req.params.id;
-	console.log(req.body);
-	console.log(req.params);
-    res.json({"233" : 1});
+    client.payOrder(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 };

@@ -18,30 +18,51 @@ const inventory_service = grpc.loadPackageDefinition(package_definition).Invento
 const client = new inventory_service(INVENTORY_SERVICE_ADDRESS, grpc.credentials.createInsecure());
 
 exports.get = (req, res) => {
-    const id = req.params.id;
-	client.get({product_id: id}, (err, data) => {
-		console.log(data)
+	client.get(req.params, (err, data) => {
 		if (err) {
 			console.log(err);
 		} else {
             res.json(data);
-			console.log('Response received from remote service:', data); // API response
 		}
 	});
 };
 
 exports.getall = (req, res) => {
-    res.json({ "a": 1231222222223213 });
+    client.getall({}, (err, data) => {
+        if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+    });
 };
 
 exports.add = (req, res) => {
-    res.json({"sexual" : "ssss"});
+    client.add(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 }
 
 exports.update = (req, res) => {
-    res.json({"sexual" : "ss33333ss"});
+    client.update(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 }
 
 exports.delete = (req, res) => {
-    res.json({"sexual" : "12ssss"});
+    client.delete(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
 }
