@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service OrderManagementService {
+    rpc add(Order) returns (google.protobuf.Empty) {}
+    rpc get(OrderRetrieveRequest) returns (Order) {}
+    rpc update(Order) returns (Order) {}
+    rpc delete(Order) returns (google.protobuf.Empty) {}
+}
+
+message Order {
+    int32 order_id    = 1;
+    int32 produtct_id = 2;
+    int32 amount      = 3;
+}
+
+message OrderRetrieveRequest {
+    int32 order_id = 1;
+}
