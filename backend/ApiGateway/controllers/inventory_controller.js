@@ -4,33 +4,65 @@ const protoLoader = require("@grpc/proto-loader");
 const INVENTORY_SERVICE_PROTO   = process.env.INVENTORY_SERVICE_PROTO;
 const INVENTORY_SERVICE_ADDRESS = process.env.INVENTORY_SERVICE_ADDRESS;
 
+// Setting up the gRPC client
+const package_definition = protoLoader.loadSync(
+    INVENTORY_SERVICE_PROTO, {
+        keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true
+});
+
+const inventory_service = grpc.loadPackageDefinition(package_definition).InventoryService;
+const client = new inventory_service(INVENTORY_SERVICE_ADDRESS, grpc.credentials.createInsecure());
 
 exports.get = (req, res) => {
-    const package_definition = protoLoader.loadSync(
-        INVENTORY_SERVICE_PROTO, {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-    });
-
-    const inventory_service = grpc.loadPackageDefinition(package_definition).InventoryService;
-	const client = new inventory_service(INVENTORY_SERVICE_ADDRESS, grpc.credentials.createInsecure());
-
-    const id = req.params.id;
-
-	client.get({product_id: id}, (err, data) => {
-		console.log(data)
+	client.get(req.params, (err, data) => {
 		if (err) {
 			console.log(err);
 		} else {
-            res.send(data);
-			console.log('Response received from remote service:', data); // API response
+            res.json(data);
 		}
 	});
 };
 
 exports.getall = (req, res) => {
-    res.send({ "a": 1231222222223213 });
+    client.getall({}, (err, data) => {
+        if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+    });
 };
+
+exports.add = (req, res) => {
+    client.add(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
+}
+
+exports.update = (req, res) => {
+    client.update(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
+}
+
+exports.delete = (req, res) => {
+    client.delete(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
+}
