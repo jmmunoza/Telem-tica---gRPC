@@ -5,10 +5,10 @@ import { PaymentService } from './app/services/payment_service.js';
 
 dotenv.config()
 
-const PAYMENT_SERVICE_PROTO          = process.env.PAYMENT_SERVICE_PROTO;
-const ORDER_MANAGEMENT_SERVICE_PROTO = process.env.ORDER_MANAGEMENT_SERVICE_PROTO;
-const REMOTE_HOST                    = process.env.REMOTE_HOST;
-const LOCAL_HOST                     = process.env.LOCAL_HOST;
+const PAYMENT_SERVICE_PROTO            = process.env.PAYMENT_SERVICE_PROTO;
+const PAYMENT_SERVICE_ADDRESS          = process.env.PAYMENT_SERVICE_ADDRESS;
+const ORDER_MANAGEMENT_SERVICE_PROTO   = process.env.ORDER_MANAGEMENT_SERVICE_PROTO;
+const ORDER_MANAGEMENT_SERVICE_ADDRESS = process.env.ORDER_MANAGEMENT_SERVICE_ADDRESS;
 
 function serve() {
     console.info("Consumer service is started...");
@@ -24,7 +24,7 @@ function serve() {
     const payment_service = proto_descriptor.service;
     var server = new grpc.Server();
     server.addService(payment_service, {payOrder: PaymentService.payOrder});
-    server.bindAsync(LOCAL_HOST, grpc.ServerCredentials.createInsecure(), () => {
+    server.bindAsync(PAYMENT_SERVICE_ADDRESS, grpc.ServerCredentials.createInsecure(), () => {
         server.start();
     });
 };
@@ -41,7 +41,7 @@ function run() {
     });
 
     const order_management_service = grpc.loadPackageDefinition(package_definition).OrderManagementService;
-	const client = new order_management_service(REMOTE_HOST, grpc.credentials.createInsecure());
+	const client = new order_management_service(ORDER_MANAGEMENT_SERVICE_ADDRESS, grpc.credentials.createInsecure());
 
     const order = {
         order_id : 1,

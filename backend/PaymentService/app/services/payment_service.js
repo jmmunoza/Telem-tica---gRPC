@@ -10,4 +10,12 @@ export class PaymentService {
     payOrder(call, callback) {
         console.log(call);
     }
+
+    addMoney(call, callback) {
+        console.log(call);
+    }
+
+    createUser(call, callback) {
+        console.log(call);
+    }
 }

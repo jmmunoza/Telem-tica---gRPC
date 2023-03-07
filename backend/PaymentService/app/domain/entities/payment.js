@@ -1,12 +1,12 @@
 class Payment {
     #order_id
     #amount
-    #customer_name
+    #user_id
 
-    constructor(order_id, amount, customer_name){
+    constructor(order_id, user_id, amount){
         this.#order_id      = order_id;
         this.#amount        = amount;
-        this.#customer_name = customer_name;
+        this.#user_id       = user_id;
     }
 
     getOrderId() {
@@ -17,7 +17,7 @@ class Payment {
         return this.#amount;
     }
 
-    getCustomerName(){
-        return this.#customer_name;
+    getUserId(){
+        return this.#user_id;
     }
 }

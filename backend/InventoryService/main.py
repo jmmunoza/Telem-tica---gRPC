@@ -1,10 +1,10 @@
 from concurrent import futures
 from app.services.inventory_service import InventoryService
-import grpc
+import grpc, os, dotenv
 from app.grpc_generated.inventoryservicegrpc import inventoryservice_pb2_grpc
 
-HOST = '[::]:8080'
-
+dotenv.load_dotenv()
+INVENTORY_SERVICE_ADDRESS = os.getenv('INVENTORY_SERVICE_ADDRESS')
 
 def serve():
     # Creating the server
@@ -16,7 +16,7 @@ def serve():
 
     # Starting the server
     print("Server is running...")
-    server.add_insecure_port(HOST)
+    server.add_insecure_port(INVENTORY_SERVICE_ADDRESS)
     server.start()
     server.wait_for_termination()
 

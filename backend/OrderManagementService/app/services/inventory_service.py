@@ -1,6 +1,6 @@
 from app.grpc_generated.inventoryservicegrpc import inventoryservice_pb2
 from app.grpc_generated.inventoryservicegrpc import inventoryservice_pb2_grpc
-from app.adapter.product_repository_implementation import ProductRepositoryImplementation
+from OrderManagementService.app.adapter.product_repository_grpc import ProductRepositoryImplementation
 
 
 class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
@@ -19,10 +19,6 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
     def get(self, request, context):
         print(request, "getAll")
         return self._product_repository.get()
-
-    def update(self, request, context):
-        print(request, "getAll")
-        self._product_repository.update()
 
     def delete(self, request, context):
         print(request, "getAll")

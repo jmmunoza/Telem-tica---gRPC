@@ -21,36 +21,33 @@ exports.get = (req, res) => {
 	client.get(req.params, (err, data) => {
 		if (err) {
 			console.log(err);
+			res.json({"error": err});
 		} else {
             res.json(data);
 		}
 	});
+
+	
 };
 
-exports.getall = (req, res) => {
-    client.getall({}, (err, data) => {
-        if (err) {
-			console.log(err);
-		} else {
-            res.json(data);
-		}
-    });
+exports.getAll = (req, res) => {
+	var products_list = []
+
+	let call = client.getAll({});
+	call.on('data', function(response) {
+		products_list.push(response);
+	});
+
+	call.on('end',function() {
+		res.json(products_list);
+	});
 };
 
 exports.add = (req, res) => {
     client.add(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
-		} else {
-            res.json(data);
-		}
-	});
-}
-
-exports.update = (req, res) => {
-    client.update(req.body, (err, data) => {
-		if (err) {
-			console.log(err);
+			res.json({"error": err});
 		} else {
             res.json(data);
 		}
@@ -61,6 +58,7 @@ exports.delete = (req, res) => {
     client.delete(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
+			res.json({"error": err});
 		} else {
             res.json(data);
 		}

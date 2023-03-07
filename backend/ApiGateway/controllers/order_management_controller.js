@@ -27,8 +27,8 @@ exports.get = (req, res) => {
 	});
 };
 
-exports.add = (req, res) => {
-    client.add(req.body, (err, data) => {
+exports.create = (req, res) => {
+    client.create(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
 		} else {
@@ -37,8 +37,8 @@ exports.add = (req, res) => {
 	});
 }
 
-exports.update = (req, res) => {
-    client.update(req.body, (err, data) => {
+exports.cancel = (req, res) => {
+    client.cancel(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
 		} else {
@@ -47,8 +47,8 @@ exports.update = (req, res) => {
 	});
 }
 
-exports.delete = (req, res) => {
-    client.delete(req.body, (err, data) => {
+exports.complete = (req, res) => {
+    client.complete(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
 		} else {

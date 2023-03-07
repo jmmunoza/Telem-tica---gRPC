@@ -2,7 +2,6 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import app.grpc_generated.inventoryservicegrpc.inventoryservice_pb2 as inventoryservice__pb2
 
 
@@ -17,28 +16,23 @@ class InventoryServiceStub(object):
         """
         self.getAll = channel.unary_stream(
                 '/InventoryService/getAll',
-                request_serializer=inventoryservice__pb2.ProductListRequest.SerializeToString,
+                request_serializer=inventoryservice__pb2.GetAllProductsRequest.SerializeToString,
                 response_deserializer=inventoryservice__pb2.Product.FromString,
                 )
         self.add = channel.unary_unary(
                 '/InventoryService/add',
-                request_serializer=inventoryservice__pb2.Product.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                request_serializer=inventoryservice__pb2.AddProductRequest.SerializeToString,
+                response_deserializer=inventoryservice__pb2.Product.FromString,
                 )
         self.get = channel.unary_unary(
                 '/InventoryService/get',
-                request_serializer=inventoryservice__pb2.ProductRetrieveRequest.SerializeToString,
-                response_deserializer=inventoryservice__pb2.Product.FromString,
-                )
-        self.update = channel.unary_unary(
-                '/InventoryService/update',
-                request_serializer=inventoryservice__pb2.Product.SerializeToString,
+                request_serializer=inventoryservice__pb2.GetProductRequest.SerializeToString,
                 response_deserializer=inventoryservice__pb2.Product.FromString,
                 )
         self.delete = channel.unary_unary(
                 '/InventoryService/delete',
-                request_serializer=inventoryservice__pb2.Product.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                request_serializer=inventoryservice__pb2.DeleteProductRequest.SerializeToString,
+                response_deserializer=inventoryservice__pb2.Response.FromString,
                 )
 
 
@@ -63,12 +57,6 @@ class InventoryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def update(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def delete(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -80,28 +68,23 @@ def add_InventoryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'getAll': grpc.unary_stream_rpc_method_handler(
                     servicer.getAll,
-                    request_deserializer=inventoryservice__pb2.ProductListRequest.FromString,
+                    request_deserializer=inventoryservice__pb2.GetAllProductsRequest.FromString,
                     response_serializer=inventoryservice__pb2.Product.SerializeToString,
             ),
             'add': grpc.unary_unary_rpc_method_handler(
                     servicer.add,
-                    request_deserializer=inventoryservice__pb2.Product.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    request_deserializer=inventoryservice__pb2.AddProductRequest.FromString,
+                    response_serializer=inventoryservice__pb2.Product.SerializeToString,
             ),
             'get': grpc.unary_unary_rpc_method_handler(
                     servicer.get,
-                    request_deserializer=inventoryservice__pb2.ProductRetrieveRequest.FromString,
-                    response_serializer=inventoryservice__pb2.Product.SerializeToString,
-            ),
-            'update': grpc.unary_unary_rpc_method_handler(
-                    servicer.update,
-                    request_deserializer=inventoryservice__pb2.Product.FromString,
+                    request_deserializer=inventoryservice__pb2.GetProductRequest.FromString,
                     response_serializer=inventoryservice__pb2.Product.SerializeToString,
             ),
             'delete': grpc.unary_unary_rpc_method_handler(
                     servicer.delete,
-                    request_deserializer=inventoryservice__pb2.Product.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    request_deserializer=inventoryservice__pb2.DeleteProductRequest.FromString,
+                    response_serializer=inventoryservice__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -125,7 +108,7 @@ class InventoryService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/InventoryService/getAll',
-            inventoryservice__pb2.ProductListRequest.SerializeToString,
+            inventoryservice__pb2.GetAllProductsRequest.SerializeToString,
             inventoryservice__pb2.Product.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -142,8 +125,8 @@ class InventoryService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryService/add',
-            inventoryservice__pb2.Product.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            inventoryservice__pb2.AddProductRequest.SerializeToString,
+            inventoryservice__pb2.Product.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -159,24 +142,7 @@ class InventoryService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryService/get',
-            inventoryservice__pb2.ProductRetrieveRequest.SerializeToString,
-            inventoryservice__pb2.Product.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def update(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/InventoryService/update',
-            inventoryservice__pb2.Product.SerializeToString,
+            inventoryservice__pb2.GetProductRequest.SerializeToString,
             inventoryservice__pb2.Product.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -193,7 +159,7 @@ class InventoryService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryService/delete',
-            inventoryservice__pb2.Product.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            inventoryservice__pb2.DeleteProductRequest.SerializeToString,
+            inventoryservice__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

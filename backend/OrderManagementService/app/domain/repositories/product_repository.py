@@ -3,10 +3,9 @@ from typing import List
 
 from app.domain.entities.product import Product
 
-
 class ProductRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def add(self, product: Product) -> None:
+    def add(self, product: Product) -> bool:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -18,9 +17,5 @@ class ProductRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
     
     @abc.abstractmethod
-    def update(self, product: Product) -> None:
-        raise NotImplementedError
-    
-    @abc.abstractmethod
-    def delete(self, product: Product) -> None:
+    def delete(self, product: Product) -> bool:
         raise NotImplementedError
