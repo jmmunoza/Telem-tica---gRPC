@@ -1,12 +1,12 @@
 from app.grpc_generated.inventoryservicegrpc import inventoryservice_pb2
 from app.grpc_generated.inventoryservicegrpc import inventoryservice_pb2_grpc
-from OrderManagementService.app.adapter.product_repository_grpc import ProductRepositoryImplementation
+from app.adapter.product_repository_grpc import ProductRepositoryGrpc
 
 
 class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
     def __init__(self) -> None:
         super().__init__()
-        self._product_repository = ProductRepositoryImplementation()
+        self._product_repository = ProductRepositoryGrpc()
 
     def getAll(self, request, context):
         print(request, "getAll")

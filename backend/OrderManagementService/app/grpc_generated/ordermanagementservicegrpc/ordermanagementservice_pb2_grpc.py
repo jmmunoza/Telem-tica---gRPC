@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import ordermanagementservice_pb2 as ordermanagementservice__pb2
+import app.grpc_generated.ordermanagementservicegrpc.ordermanagementservice_pb2 as ordermanagementservice__pb2
 
 
 class OrderManagementServiceStub(object):
@@ -27,12 +27,12 @@ class OrderManagementServiceStub(object):
         self.cancel = channel.unary_unary(
                 '/OrderManagementService/cancel',
                 request_serializer=ordermanagementservice__pb2.OrderRequest.SerializeToString,
-                response_deserializer=ordermanagementservice__pb2.Response.FromString,
+                response_deserializer=ordermanagementservice__pb2.OrderResponse.FromString,
                 )
         self.complete = channel.unary_unary(
                 '/OrderManagementService/complete',
                 request_serializer=ordermanagementservice__pb2.OrderRequest.SerializeToString,
-                response_deserializer=ordermanagementservice__pb2.Response.FromString,
+                response_deserializer=ordermanagementservice__pb2.OrderResponse.FromString,
                 )
 
 
@@ -79,12 +79,12 @@ def add_OrderManagementServiceServicer_to_server(servicer, server):
             'cancel': grpc.unary_unary_rpc_method_handler(
                     servicer.cancel,
                     request_deserializer=ordermanagementservice__pb2.OrderRequest.FromString,
-                    response_serializer=ordermanagementservice__pb2.Response.SerializeToString,
+                    response_serializer=ordermanagementservice__pb2.OrderResponse.SerializeToString,
             ),
             'complete': grpc.unary_unary_rpc_method_handler(
                     servicer.complete,
                     request_deserializer=ordermanagementservice__pb2.OrderRequest.FromString,
-                    response_serializer=ordermanagementservice__pb2.Response.SerializeToString,
+                    response_serializer=ordermanagementservice__pb2.OrderResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -143,7 +143,7 @@ class OrderManagementService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/OrderManagementService/cancel',
             ordermanagementservice__pb2.OrderRequest.SerializeToString,
-            ordermanagementservice__pb2.Response.FromString,
+            ordermanagementservice__pb2.OrderResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -160,6 +160,6 @@ class OrderManagementService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/OrderManagementService/complete',
             ordermanagementservice__pb2.OrderRequest.SerializeToString,
-            ordermanagementservice__pb2.Response.FromString,
+            ordermanagementservice__pb2.OrderResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

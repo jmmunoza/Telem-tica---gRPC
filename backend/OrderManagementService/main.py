@@ -56,5 +56,5 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
-    #serve()
+    #run()
+    serve()

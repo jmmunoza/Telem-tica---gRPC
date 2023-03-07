@@ -60,6 +60,6 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
 
         # Sending response
         if is_successful:
-            return inventoryservice_pb2.Response(is_successful=True, message="Product deleted succesfully")
+            return inventoryservice_pb2.ProductResponse(is_successful=True, message="Product deleted succesfully")
         else:
-            return inventoryservice_pb2.Response(is_successful=False, message="There was an error")
+            return inventoryservice_pb2.ProductResponse(is_successful=False, message="There was an error")

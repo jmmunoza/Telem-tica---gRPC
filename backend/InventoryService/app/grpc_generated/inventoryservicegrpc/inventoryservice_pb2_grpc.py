@@ -32,7 +32,7 @@ class InventoryServiceStub(object):
         self.delete = channel.unary_unary(
                 '/InventoryService/delete',
                 request_serializer=inventoryservice__pb2.DeleteProductRequest.SerializeToString,
-                response_deserializer=inventoryservice__pb2.Response.FromString,
+                response_deserializer=inventoryservice__pb2.ProductResponse.FromString,
                 )
 
 
@@ -84,7 +84,7 @@ def add_InventoryServiceServicer_to_server(servicer, server):
             'delete': grpc.unary_unary_rpc_method_handler(
                     servicer.delete,
                     request_deserializer=inventoryservice__pb2.DeleteProductRequest.FromString,
-                    response_serializer=inventoryservice__pb2.Response.SerializeToString,
+                    response_serializer=inventoryservice__pb2.ProductResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -160,6 +160,6 @@ class InventoryService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryService/delete',
             inventoryservice__pb2.DeleteProductRequest.SerializeToString,
-            inventoryservice__pb2.Response.FromString,
+            inventoryservice__pb2.ProductResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import inventoryservice_pb2 as inventoryservice__pb2
+import app.grpc_generated.inventoryservicegrpc.inventoryservice_pb2 as inventoryservice__pb2
 
 
 class InventoryServiceStub(object):
@@ -21,8 +21,8 @@ class InventoryServiceStub(object):
                 )
         self.add = channel.unary_unary(
                 '/InventoryService/add',
-                request_serializer=inventoryservice__pb2.Product.SerializeToString,
-                response_deserializer=inventoryservice__pb2.Response.FromString,
+                request_serializer=inventoryservice__pb2.AddProductRequest.SerializeToString,
+                response_deserializer=inventoryservice__pb2.Product.FromString,
                 )
         self.get = channel.unary_unary(
                 '/InventoryService/get',
@@ -73,8 +73,8 @@ def add_InventoryServiceServicer_to_server(servicer, server):
             ),
             'add': grpc.unary_unary_rpc_method_handler(
                     servicer.add,
-                    request_deserializer=inventoryservice__pb2.Product.FromString,
-                    response_serializer=inventoryservice__pb2.Response.SerializeToString,
+                    request_deserializer=inventoryservice__pb2.AddProductRequest.FromString,
+                    response_serializer=inventoryservice__pb2.Product.SerializeToString,
             ),
             'get': grpc.unary_unary_rpc_method_handler(
                     servicer.get,
@@ -125,8 +125,8 @@ class InventoryService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryService/add',
-            inventoryservice__pb2.Product.SerializeToString,
-            inventoryservice__pb2.Response.FromString,
+            inventoryservice__pb2.AddProductRequest.SerializeToString,
+            inventoryservice__pb2.Product.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

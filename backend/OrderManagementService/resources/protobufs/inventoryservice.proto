@@ -4,7 +4,7 @@ service InventoryService {
     rpc getAll(GetAllProductsRequest) returns (stream Product) {}
     rpc add(AddProductRequest)        returns (Product) {}
     rpc get(GetProductRequest)        returns (Product) {}
-    rpc delete(DeleteProductRequest)  returns (Response) {}
+    rpc delete(DeleteProductRequest)  returns (ProductResponse) {}
 }
 
 message Product {
@@ -23,7 +23,7 @@ message AddProductRequest {
 message GetAllProductsRequest {
 }
 
-message Response {
+message ProductResponse {
     bool is_successful  = 1;
     string message      = 2;
 }

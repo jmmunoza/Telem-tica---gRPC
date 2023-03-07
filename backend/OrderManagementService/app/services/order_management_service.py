@@ -1,6 +1,6 @@
 from app.grpc_generated.ordermanagementservicegrpc import ordermanagementservice_pb2, ordermanagementservice_pb2_grpc
 from app.adapter.order_respository_implementation import OrderRepositoryImplementation
-from app.parser.order_parser import order_list_to_grpc_message
+from app.parser.order_parser import order_list_to_grpc_message, order_to_grpc_message
 from google.protobuf.json_format import MessageToDict
 
 class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServiceServicer):
@@ -24,13 +24,13 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
         amount       = request_dict['amount']
         
         # Adding to repo (could be a DB)
-        is_successful = self._order_repository.create(product_id, amount)
-
+        order = self._order_repository.create(product_id, amount)
+        
+        # parsing response
+        response = order_to_grpc_message(order)
+        
         # Sending response
-        if is_successful:
-            return ordermanagementservice_pb2.Response(is_successfull=True, message="Order created succesfully")
-        else:
-            return ordermanagementservice_pb2.Response(is_successfull=False, message="There was an error")
+        return response
 
     def cancel(self, request, context):
         # Parsing request
@@ -42,9 +42,9 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
 
         # Sending response
         if is_successful:
-            return ordermanagementservice_pb2.Response(is_successfull=True, message="Order canceled succesfully")
+            return ordermanagementservice_pb2.OrderResponse(is_successful=True, message="Order canceled succesfully")
         else:
-            return ordermanagementservice_pb2.Response(is_successfull=False, message="There was an error")
+            return ordermanagementservice_pb2.OrderResponse(is_successful=False, message="There was an error")
 
     def complete(self, request, context):
         # Parsing request
@@ -56,6 +56,6 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
 
         # Sending response
         if is_successful:
-            return ordermanagementservice_pb2.Response(is_successfull=True, message="Order completed succesfully")
+            return ordermanagementservice_pb2.OrderResponse(is_successful=True, message="Order completed succesfully")
         else:
-            return ordermanagementservice_pb2.Response(is_successfull=False, message="There was an error")
+            return ordermanagementservice_pb2.OrderResponse(is_successful=False, message="There was an error")

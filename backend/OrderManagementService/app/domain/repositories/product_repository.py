@@ -5,7 +5,7 @@ from app.domain.entities.product import Product
 
 class ProductRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def add(self, product: Product) -> bool:
+    def add(self, name: str, price: float, stock: int) -> Product:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -13,9 +13,9 @@ class ProductRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self, product_id: int) -> Product:
+    def get(self, product_id: str) -> Product:
         raise NotImplementedError
     
     @abc.abstractmethod
-    def delete(self, product: Product) -> bool:
+    def delete(self, product_id: str) -> bool:
         raise NotImplementedError

@@ -14,15 +14,15 @@ class OrderRepositoryImplementation(OrderRepository):
     def getAll(self) -> List[Order]:
         return self._orders
     
-    def create(self, product_id: int, amount: float) -> Order:
-        order_id  = uuid4().int
+    def create(self, product_id: str, amount: float) -> Order:
+        order_id  = str(uuid4())
         new_order = Order(order_id, product_id, amount)
         
         self._orders.append(new_order)
         
         return new_order
 
-    def cancel(self, order_id: int) -> bool:
+    def cancel(self, order_id: str) -> bool:
         for order in self._orders:
             if order_id == order.getId():
                 self._orders.remove(order)
@@ -30,10 +30,12 @@ class OrderRepositoryImplementation(OrderRepository):
             
         return False
 
-    def complete(self, order_id: int) -> bool:
+    def complete(self, order_id: str) -> bool:
         for order in self._orders:
             if order_id == order.getId():
                 # Llamar a inventory con grpc
+                
+                # Metodo para restar de stock
                 is_successful = self._inventory_repository.delete(order.getProductId())
 
                 if is_successful:

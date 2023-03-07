@@ -9,30 +9,30 @@ class CreateOrderRequest(_message.Message):
     AMOUNT_FIELD_NUMBER: _ClassVar[int]
     PRODUCT_ID_FIELD_NUMBER: _ClassVar[int]
     amount: int
-    product_id: int
-    def __init__(self, product_id: _Optional[int] = ..., amount: _Optional[int] = ...) -> None: ...
+    product_id: str
+    def __init__(self, product_id: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
 class GetAllOrdersRequest(_message.Message):
     __slots__ = []
     def __init__(self) -> None: ...
 
 class Order(_message.Message):
-    __slots__ = ["amount", "order_id", "produtct_id"]
+    __slots__ = ["amount", "order_id", "product_id"]
     AMOUNT_FIELD_NUMBER: _ClassVar[int]
     ORDER_ID_FIELD_NUMBER: _ClassVar[int]
-    PRODUTCT_ID_FIELD_NUMBER: _ClassVar[int]
+    PRODUCT_ID_FIELD_NUMBER: _ClassVar[int]
     amount: int
-    order_id: int
-    produtct_id: int
-    def __init__(self, order_id: _Optional[int] = ..., produtct_id: _Optional[int] = ..., amount: _Optional[int] = ...) -> None: ...
+    order_id: str
+    product_id: str
+    def __init__(self, order_id: _Optional[str] = ..., product_id: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
 class OrderRequest(_message.Message):
     __slots__ = ["order_id"]
     ORDER_ID_FIELD_NUMBER: _ClassVar[int]
-    order_id: int
-    def __init__(self, order_id: _Optional[int] = ...) -> None: ...
+    order_id: str
+    def __init__(self, order_id: _Optional[str] = ...) -> None: ...
 
-class Response(_message.Message):
+class OrderResponse(_message.Message):
     __slots__ = ["is_successful", "message"]
     IS_SUCCESSFUL_FIELD_NUMBER: _ClassVar[int]
     MESSAGE_FIELD_NUMBER: _ClassVar[int]

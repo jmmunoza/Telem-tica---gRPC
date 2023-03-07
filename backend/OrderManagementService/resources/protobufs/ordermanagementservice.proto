@@ -3,8 +3,8 @@ syntax = "proto3";
 service OrderManagementService {
     rpc getAll(GetAllOrdersRequest)  returns (stream Order) {}
     rpc create(CreateOrderRequest)   returns (Order) {}
-    rpc cancel(OrderRequest)         returns (Response) {}
-    rpc complete(OrderRequest)       returns (Response) {}
+    rpc cancel(OrderRequest)         returns (OrderResponse) {}
+    rpc complete(OrderRequest)       returns (OrderResponse) {}
 }
 
 message Order {
@@ -21,7 +21,7 @@ message CreateOrderRequest {
     int32 amount      = 2;
 }
 
-message Response {
+message OrderResponse {
     bool is_successful = 1;
     string message      = 2;
 }
