@@ -2,6 +2,7 @@ syntax = "proto3";
 
 service OrderManagementService {
     rpc getAll(GetAllOrdersRequest)  returns (stream Order) {}
+    rpc get (OrderRequest)           returns (Order);
     rpc create(CreateOrderRequest)   returns (Order) {}
     rpc cancel(OrderRequest)         returns (OrderResponse) {}
     rpc complete(OrderRequest)       returns (OrderResponse) {}
@@ -23,7 +24,7 @@ message CreateOrderRequest {
 
 message OrderResponse {
     bool is_successful = 1;
-    string message      = 2;
+    string message     = 2;
 }
 
 message OrderRequest {

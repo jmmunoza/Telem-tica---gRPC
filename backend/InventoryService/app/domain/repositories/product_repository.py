@@ -20,3 +20,7 @@ class ProductRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def delete(self, product_id: str) -> bool:
         raise NotImplementedError
+    
+    @abc.abstractmethod
+    def update(self, product: Product) -> bool:
+        raise NotImplementedError

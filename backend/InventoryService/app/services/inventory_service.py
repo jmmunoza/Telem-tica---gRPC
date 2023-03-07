@@ -54,12 +54,26 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         product_id = request_dict['product_id']
-    
+
         # Adding to repo (could be a DB)
         is_successful = self._product_repository.delete(product_id)
 
         # Sending response
         if is_successful:
             return inventoryservice_pb2.ProductResponse(is_successful=True, message="Product deleted succesfully")
+        else:
+            return inventoryservice_pb2.ProductResponse(is_successful=False, message="There was an error")
+        
+    def update(self, request, context):
+        # Parsing request
+        request_dict = MessageToDict(request, preserving_proto_field_name=True)
+        product      = dict_to_product(request_dict) 
+
+        # Updating to repo (could be a DB)
+        is_successful = self._product_repository.update(product)
+
+        # Sending response
+        if is_successful:
+            return inventoryservice_pb2.ProductResponse(is_successful=True, message="Product updated succesfully")
         else:
             return inventoryservice_pb2.ProductResponse(is_successful=False, message="There was an error")

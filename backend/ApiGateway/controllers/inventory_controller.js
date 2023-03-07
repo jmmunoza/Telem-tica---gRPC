@@ -26,8 +26,6 @@ exports.get = (req, res) => {
             res.json(data);
 		}
 	});
-
-	
 };
 
 exports.getAll = (req, res) => {
@@ -56,6 +54,17 @@ exports.add = (req, res) => {
 
 exports.delete = (req, res) => {
     client.delete(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+			res.json({"error": err});
+		} else {
+            res.json(data);
+		}
+	});
+}
+
+exports.update = (req, res) => {
+    client.update(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
 			res.json({"error": err});

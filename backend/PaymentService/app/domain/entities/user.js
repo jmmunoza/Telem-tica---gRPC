@@ -1,4 +1,4 @@
-class Payment {
+class User {
     #user_id
     #name
     #balance

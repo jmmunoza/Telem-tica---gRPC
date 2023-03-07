@@ -16,6 +16,20 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
         # Seding responses
         for response in response_iterator:
             yield response
+            
+    def get(self, request, context):
+        # Parsing request
+        request_dict = MessageToDict(request, preserving_proto_field_name=True)
+        order_id     = request_dict['order_id']
+        
+        # Cancling to repo (could be a DB)
+        order = self._order_repository.get(order_id)
+
+        # parsing response
+        response = order_to_grpc_message(order)
+        
+        # Sending response
+        return response
 
     def create(self, request, context):
         # Parsing request

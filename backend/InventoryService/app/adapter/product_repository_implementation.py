@@ -35,3 +35,13 @@ class ProductRepositoryImplementation(ProductRepository):
                 return True
         
         return False
+    
+    def update(self, product: Product) -> bool:
+        for product_to_edit in self._products:
+            if product_to_edit.getId() == product.getId():
+                self._products.remove(product_to_edit)
+                self._products.append(product)
+                
+                return True
+        
+        return False

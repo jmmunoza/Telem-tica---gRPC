@@ -9,10 +9,17 @@ from app.adapter.product_repository_grpc import ProductRepositoryGrpc
 class OrderRepositoryImplementation(OrderRepository):
     def __init__(self):
         self._orders = []
-        self._inventory_repository = ProductRepositoryGrpc()
+        self._product_repository = ProductRepositoryGrpc()
 
     def getAll(self) -> List[Order]:
         return self._orders
+    
+    def get(self, order_id: str) -> Order:
+        for order in self._orders:
+            if order_id == order.getId():
+                return order
+            
+        return None
     
     def create(self, product_id: str, amount: float) -> Order:
         order_id  = str(uuid4())
@@ -34,9 +41,8 @@ class OrderRepositoryImplementation(OrderRepository):
         for order in self._orders:
             if order_id == order.getId():
                 # Llamar a inventory con grpc
-                
                 # Metodo para restar de stock
-                is_successful = self._inventory_repository.delete(order.getProductId())
+                is_successful = self._product_repository.delete(order.getProductId())
 
                 if is_successful:
                     self._orders.remove(order)

@@ -23,5 +23,8 @@ def order_to_grpc_message(order):
     if order is None:
         return ordermanagementservice_pb2.Order()
     
-    print(ordermanagementservice_pb2.Order(order_id = order.getId(), product_id = order.getProductId(), amount = order.getAmount()))
-    return ordermanagementservice_pb2.Order(order_id = order.getId(), product_id = order.getProductId(), amount = order.getAmount())
+    return ordermanagementservice_pb2.Order(
+        order_id = order.getId(),
+        product_id = order.getProductId(), 
+        amount = order.getAmount()
+        )

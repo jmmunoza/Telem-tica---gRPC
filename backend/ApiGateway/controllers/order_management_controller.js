@@ -21,9 +21,23 @@ exports.get = (req, res) => {
 	client.get(req.params, (err, data) => {
 		if (err) {
 			console.log(err);
+			res.json({"error": err});
 		} else {
             res.json(data);
 		}
+	});
+};
+
+exports.getAll = (req, res) => {
+	var orders_list = []
+
+	let call = client.getAll({});
+	call.on('data', function(response) {
+		orders_list.push(response);
+	});
+
+	call.on('end',function() {
+		res.json(orders_list);
 	});
 };
 

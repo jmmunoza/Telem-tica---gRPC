@@ -7,11 +7,9 @@ dotenv.config()
 
 const PAYMENT_SERVICE_PROTO            = process.env.PAYMENT_SERVICE_PROTO;
 const PAYMENT_SERVICE_ADDRESS          = process.env.PAYMENT_SERVICE_ADDRESS;
-const ORDER_MANAGEMENT_SERVICE_PROTO   = process.env.ORDER_MANAGEMENT_SERVICE_PROTO;
-const ORDER_MANAGEMENT_SERVICE_ADDRESS = process.env.ORDER_MANAGEMENT_SERVICE_ADDRESS;
 
 function serve() {
-    console.info("Consumer service is started...");
+    console.info("Payment service is started...");
     const package_definition = protoLoader.loadSync(
         PAYMENT_SERVICE_PROTO, {
             keepCase: true,
@@ -29,35 +27,5 @@ function serve() {
     });
 };
 
-function run() {
-    console.info("Consumer service is started...");
-    const package_definition = protoLoader.loadSync(
-        ORDER_MANAGEMENT_SERVICE_PROTO, {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-    });
 
-    const order_management_service = grpc.loadPackageDefinition(package_definition).OrderManagementService;
-	const client = new order_management_service(ORDER_MANAGEMENT_SERVICE_ADDRESS, grpc.credentials.createInsecure());
-
-    const order = {
-        order_id : 1,
-        product_id: 2,
-        amount: 4
-    };
-
-	client.get(order, (err, data) => {
-		console.log(data)
-		if (err) {
-			console.log(err);
-		} else {
-			console.log('Response received from remote service:', data); // API response
-		}
-	});
-
-};
-
-run();
+serve();

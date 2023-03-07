@@ -11,5 +11,6 @@ router.get("/get/:product_id", inventory_controller.get);
 router.get("/getall", inventory_controller.getAll);
 router.post("/add", json_parser, inventory_controller.add);
 router.delete("/delete", json_parser, inventory_controller.delete);
+router.post("/update", json_parser, inventory_controller.update);
 
 module.exports = router;

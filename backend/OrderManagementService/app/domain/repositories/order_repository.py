@@ -8,6 +8,9 @@ class OrderRepository(metaclass=abc.ABCMeta):
     def getAll(self) -> List[Order]:
         raise NotImplementedError
     
+    def get(self, order_id: str) -> Order:
+        raise NotImplementedError
+    
     @abc.abstractmethod
     def create(self, product_id: str, amount: float) -> Order:
         raise NotImplementedError

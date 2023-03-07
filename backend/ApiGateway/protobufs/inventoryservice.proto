@@ -5,6 +5,7 @@ service InventoryService {
     rpc add(AddProductRequest)        returns (Product) {}
     rpc get(GetProductRequest)        returns (Product) {}
     rpc delete(DeleteProductRequest)  returns (ProductResponse) {}
+    rpc update (Product)              returns (ProductResponse) {}
 }
 
 message Product {
