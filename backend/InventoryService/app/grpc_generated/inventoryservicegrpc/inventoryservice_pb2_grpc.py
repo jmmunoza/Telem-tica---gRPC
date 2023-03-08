@@ -34,6 +34,11 @@ class InventoryServiceStub(object):
                 request_serializer=inventoryservice__pb2.DeleteProductRequest.SerializeToString,
                 response_deserializer=inventoryservice__pb2.ProductResponse.FromString,
                 )
+        self.update = channel.unary_unary(
+                '/InventoryService/update',
+                request_serializer=inventoryservice__pb2.Product.SerializeToString,
+                response_deserializer=inventoryservice__pb2.ProductResponse.FromString,
+                )
 
 
 class InventoryServiceServicer(object):
@@ -63,6 +68,12 @@ class InventoryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def update(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_InventoryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -84,6 +95,11 @@ def add_InventoryServiceServicer_to_server(servicer, server):
             'delete': grpc.unary_unary_rpc_method_handler(
                     servicer.delete,
                     request_deserializer=inventoryservice__pb2.DeleteProductRequest.FromString,
+                    response_serializer=inventoryservice__pb2.ProductResponse.SerializeToString,
+            ),
+            'update': grpc.unary_unary_rpc_method_handler(
+                    servicer.update,
+                    request_deserializer=inventoryservice__pb2.Product.FromString,
                     response_serializer=inventoryservice__pb2.ProductResponse.SerializeToString,
             ),
     }
@@ -160,6 +176,23 @@ class InventoryService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryService/delete',
             inventoryservice__pb2.DeleteProductRequest.SerializeToString,
+            inventoryservice__pb2.ProductResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def update(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/InventoryService/update',
+            inventoryservice__pb2.Product.SerializeToString,
             inventoryservice__pb2.ProductResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

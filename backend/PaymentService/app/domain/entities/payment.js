@@ -1,4 +1,4 @@
-class Payment {
+export class Payment {
     #order_id
     #amount
     #user_id

@@ -42,7 +42,7 @@ class Product(_message.Message):
     stock: int
     def __init__(self, product_id: _Optional[str] = ..., name: _Optional[str] = ..., price: _Optional[float] = ..., stock: _Optional[int] = ...) -> None: ...
 
-class Response(_message.Message):
+class ProductResponse(_message.Message):
     __slots__ = ["is_successful", "message"]
     IS_SUCCESSFUL_FIELD_NUMBER: _ClassVar[int]
     MESSAGE_FIELD_NUMBER: _ClassVar[int]

@@ -10,5 +10,9 @@ export class UserRepository {
         if(!this.addMoney) {
             throw new Error("addMoney() method is missing");
         }
+
+        if(!this.getUser) {
+            throw new Error("getUser() method is missing");
+        }
     }
 }

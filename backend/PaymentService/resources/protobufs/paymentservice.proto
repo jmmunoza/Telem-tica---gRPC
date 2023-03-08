@@ -1,9 +1,10 @@
 syntax = "proto3";
 
 service PaymentService {
-    rpc payOrder (Payment) returns (Response) {}
-    rpc addMoney (AddMoneyRequest) returns (Response) {}
+    rpc payOrder (Payment) returns (PaymentResponse) {}
+    rpc addMoney (AddMoneyRequest) returns (PaymentResponse) {}
     rpc createUser (CreateUserRequest) returns (User) {}
+    rpc getUser (UserRequest) returns (User);
 }
 
 message Payment {
@@ -18,7 +19,7 @@ message User {
     float balance  = 3;
 }
 
-message Response {
+message PaymentResponse {
     bool is_successful = 1;
     string message      = 2;
 }
@@ -30,4 +31,8 @@ message CreateUserRequest {
 message AddMoneyRequest {
     string user_id = 1;
     float amount   = 2;
+}
+
+message UserRequest {
+    string user_id = 1;
 }

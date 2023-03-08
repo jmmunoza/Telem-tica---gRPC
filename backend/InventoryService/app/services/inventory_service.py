@@ -13,6 +13,7 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
         self._product_repository = ProductRepositoryImplementation()
 
     def getAll(self, request, context):
+        print("getall ", request)
         # Parsing response
         products = self._product_repository.getAll()
         response_iterator = product_list_to_grpc_message(products)
@@ -23,6 +24,7 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
             
 
     def add(self, request, context):
+        print("add ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         name         = request_dict['name']
@@ -39,6 +41,7 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
         return response
 
     def get(self, request, context):
+        print("get ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         product_id = request_dict['product_id']
@@ -51,6 +54,7 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
         return response
 
     def delete(self, request, context):
+        print("delete ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         product_id = request_dict['product_id']
@@ -65,6 +69,7 @@ class InventoryService(inventoryservice_pb2_grpc.InventoryServiceServicer):
             return inventoryservice_pb2.ProductResponse(is_successful=False, message="There was an error")
         
     def update(self, request, context):
+        print("update ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         product      = dict_to_product(request_dict) 

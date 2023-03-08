@@ -3,7 +3,6 @@ import grpc, os, dotenv
 
 # Import Services
 from app.services.order_management_service import OrderManagementService
-from app.services.inventory_service import InventoryService
 
 # Import Grpc Services
 from app.grpc_generated.ordermanagementservicegrpc import ordermanagementservice_pb2_grpc
@@ -19,10 +18,6 @@ def serve():
     # Adding Order Management Service to the server
     ordermanagementservice_pb2_grpc.add_OrderManagementServiceServicer_to_server(
         OrderManagementService(), server)
-
-    # Adding Inventory Service to the server
-    inventoryservice_pb2_grpc.add_InventoryServiceServicer_to_server(
-        InventoryService(), server)
 
     # Starting the server
     print("Server is running...")

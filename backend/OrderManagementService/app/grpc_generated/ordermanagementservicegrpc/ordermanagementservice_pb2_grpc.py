@@ -19,6 +19,11 @@ class OrderManagementServiceStub(object):
                 request_serializer=ordermanagementservice__pb2.GetAllOrdersRequest.SerializeToString,
                 response_deserializer=ordermanagementservice__pb2.Order.FromString,
                 )
+        self.get = channel.unary_unary(
+                '/OrderManagementService/get',
+                request_serializer=ordermanagementservice__pb2.OrderRequest.SerializeToString,
+                response_deserializer=ordermanagementservice__pb2.Order.FromString,
+                )
         self.create = channel.unary_unary(
                 '/OrderManagementService/create',
                 request_serializer=ordermanagementservice__pb2.CreateOrderRequest.SerializeToString,
@@ -40,6 +45,12 @@ class OrderManagementServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def getAll(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def get(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -69,6 +80,11 @@ def add_OrderManagementServiceServicer_to_server(servicer, server):
             'getAll': grpc.unary_stream_rpc_method_handler(
                     servicer.getAll,
                     request_deserializer=ordermanagementservice__pb2.GetAllOrdersRequest.FromString,
+                    response_serializer=ordermanagementservice__pb2.Order.SerializeToString,
+            ),
+            'get': grpc.unary_unary_rpc_method_handler(
+                    servicer.get,
+                    request_deserializer=ordermanagementservice__pb2.OrderRequest.FromString,
                     response_serializer=ordermanagementservice__pb2.Order.SerializeToString,
             ),
             'create': grpc.unary_unary_rpc_method_handler(
@@ -109,6 +125,23 @@ class OrderManagementService(object):
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/OrderManagementService/getAll',
             ordermanagementservice__pb2.GetAllOrdersRequest.SerializeToString,
+            ordermanagementservice__pb2.Order.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/get',
+            ordermanagementservice__pb2.OrderRequest.SerializeToString,
             ordermanagementservice__pb2.Order.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

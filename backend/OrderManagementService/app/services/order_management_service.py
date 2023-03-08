@@ -9,6 +9,7 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
         self._order_repository = OrderRepositoryImplementation()
 
     def getAll(self, request, context):
+        print("getall ", request)
         # Parsing response
         orders = self._order_repository.getAll()
         response_iterator = order_list_to_grpc_message(orders)
@@ -18,9 +19,11 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
             yield response
             
     def get(self, request, context):
+        print("get ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         order_id     = request_dict['order_id']
+        print(order_id)
         
         # Cancling to repo (could be a DB)
         order = self._order_repository.get(order_id)
@@ -32,6 +35,7 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
         return response
 
     def create(self, request, context):
+        print("create ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         product_id   = request_dict['product_id']
@@ -47,6 +51,7 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
         return response
 
     def cancel(self, request, context):
+        print("cancel ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         order_id     = request_dict['order_id']
@@ -61,6 +66,7 @@ class OrderManagementService(ordermanagementservice_pb2_grpc.OrderManagementServ
             return ordermanagementservice_pb2.OrderResponse(is_successful=False, message="There was an error")
 
     def complete(self, request, context):
+        print("complete ", request)
         # Parsing request
         request_dict = MessageToDict(request, preserving_proto_field_name=True)
         order_id     = request_dict['order_id']

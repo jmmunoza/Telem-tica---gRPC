@@ -3,13 +3,14 @@ import grpc        from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import { PaymentService } from './app/services/payment_service.js';
 
+
 dotenv.config()
 
-const PAYMENT_SERVICE_PROTO            = process.env.PAYMENT_SERVICE_PROTO;
-const PAYMENT_SERVICE_ADDRESS          = process.env.PAYMENT_SERVICE_ADDRESS;
+const PAYMENT_SERVICE_PROTO  = process.env.PAYMENT_SERVICE_PROTO;
+const PAYMENT_SERVICE_ADDRESS= process.env.PAYMENT_SERVICE_ADDRESS;
 
 function serve() {
-    console.info("Payment service is started...");
+    
     const package_definition = protoLoader.loadSync(
         PAYMENT_SERVICE_PROTO, {
             keepCase: true,
@@ -18,14 +19,22 @@ function serve() {
             defaults: true,
             oneofs: true
     });
+    
     const proto_descriptor = grpc.loadPackageDefinition(package_definition).PaymentService;
     const payment_service = proto_descriptor.service;
     var server = new grpc.Server();
-    server.addService(payment_service, {payOrder: PaymentService.payOrder});
+    server.addService(payment_service, {
+        payOrder  : PaymentService.payOrder,
+        addMoney  : PaymentService.addMoney,
+        createUser: PaymentService.createUser,
+        getUser   : PaymentService.getUser     
+    });
+    
+    
     server.bindAsync(PAYMENT_SERVICE_ADDRESS, grpc.ServerCredentials.createInsecure(), () => {
+        console.info("Payment service is started...");
         server.start();
     });
 };
-
 
 serve();

@@ -1,13 +1,16 @@
 import { ProductRepository } from "../domain/repositories/product_repository.js";
 import grpc        from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
+import dotenv      from 'dotenv';
+
+dotenv.config();
 
 export class ProductRepositoryGrpc extends ProductRepository {
     #client
 
     constructor() {
         super();
-
+        
         const INVENTORY_SERVICE_PROTO   = process.env.INVENTORY_SERVICE_PROTO;
         const INVENTORY_SERVICE_ADDRESS = process.env.INVENTORY_SERVICE_ADDRESS;
 
@@ -20,18 +23,13 @@ export class ProductRepositoryGrpc extends ProductRepository {
                 oneofs: true
         });
 
-        const inventory_service = grpc.loadPackageDefinition(package_definition).InventoryService;
-        this.#client = new inventory_service(INVENTORY_SERVICE_ADDRESS, grpc.credentials.createInsecure());
+        const proto_descriptor = grpc.loadPackageDefinition(package_definition).InventoryService;
+        this.#client = new proto_descriptor(INVENTORY_SERVICE_ADDRESS, grpc.credentials.createInsecure());
     }
 
-    get(product_id){
-        this.#client.get(order, (err, data) => {
-            console.log(data)
-            if (err) {
-                console.log(err);
-            } else {
-                console.log('Response received from remote service:', data); 
-            }
+    get(product_id, callback){
+        this.#client.get({"product_id": product_id}, (err, data) => {
+            callback(err, data);
         });
     }
 }

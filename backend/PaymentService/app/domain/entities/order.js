@@ -1,4 +1,4 @@
-class User {
+export class Order {
 	#product_id
 	#amount
 	#order_id

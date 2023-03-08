@@ -1,4 +1,4 @@
-class User {
+export class User {
     #user_id
     #name
     #balance
@@ -9,7 +9,7 @@ class User {
         this.#balance       = balance;
     }
 
-    getOrderId() {
+    getId() {
         return this.#user_id;
     }
 
