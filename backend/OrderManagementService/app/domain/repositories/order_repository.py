@@ -1,21 +1,24 @@
 import abc
+from typing import List
 
-from app.domain.entities.product import Product
 from app.domain.entities.order import Order
 
 class OrderRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def add(self, order: Order) -> None:
+    def getAll(self) -> List[Order]:
+        raise NotImplementedError
+    
+    def get(self, order_id: str) -> Order:
+        raise NotImplementedError
+    
+    @abc.abstractmethod
+    def create(self, product_id: str, amount: float) -> Order:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self, order_id: int) -> Order:
+    def cancel(self, order_id: str) -> bool:
         raise NotImplementedError
     
     @abc.abstractmethod
-    def update(self, order: Order) -> None:
-        raise NotImplementedError
-    
-    @abc.abstractmethod
-    def delete(self, order: Order) -> None:
+    def complete(self, order_id: str) -> bool:
         raise NotImplementedError

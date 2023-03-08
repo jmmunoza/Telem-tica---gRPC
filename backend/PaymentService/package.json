@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node main.js"
+    "start": "node main.js"
   },
   "author": "Juan Manuel Muñoz Arias",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "@grpc/grpc-js": "^1.8.9",
     "@grpc/proto-loader": "^0.7.5",
     "async": "^3.2.4",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "uuid": "^9.0.0"
   }
 }

@@ -11,22 +11,27 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16inventoryservice.proto\x1a\x1bgoogle/protobuf/empty.proto\";\n\x07Product\x12\x13\n\x0bprodutct_id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05price\x18\x03 \x01(\x05\"\x14\n\x12ProductListRequest\"-\n\x16ProductRetrieveRequest\x12\x13\n\x0bprodutct_id\x18\x01 \x01(\x05\x32\xe4\x01\n\x10InventoryService\x12+\n\x06getAll\x12\x13.ProductListRequest\x1a\x08.Product\"\x00\x30\x01\x12)\n\x03\x61\x64\x64\x12\x08.Product\x1a\x16.google.protobuf.Empty\"\x00\x12*\n\x03get\x12\x17.ProductRetrieveRequest\x1a\x08.Product\"\x00\x12\x1e\n\x06update\x12\x08.Product\x1a\x08.Product\"\x00\x12,\n\x06\x64\x65lete\x12\x08.Product\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16inventoryservice.proto\"I\n\x07Product\x12\x12\n\nproduct_id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05price\x18\x03 \x01(\x02\x12\r\n\x05stock\x18\x04 \x01(\x05\"?\n\x11\x41\x64\x64ProductRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\x02\x12\r\n\x05stock\x18\x03 \x01(\x05\"\x17\n\x15GetAllProductsRequest\"9\n\x0fProductResponse\x12\x15\n\ris_successful\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\'\n\x11GetProductRequest\x12\x12\n\nproduct_id\x18\x01 \x01(\t\"*\n\x14\x44\x65leteProductRequest\x12\x12\n\nproduct_id\x18\x01 \x01(\t2\xed\x01\n\x10InventoryService\x12.\n\x06getAll\x12\x16.GetAllProductsRequest\x1a\x08.Product\"\x00\x30\x01\x12%\n\x03\x61\x64\x64\x12\x12.AddProductRequest\x1a\x08.Product\"\x00\x12%\n\x03get\x12\x12.GetProductRequest\x1a\x08.Product\"\x00\x12\x33\n\x06\x64\x65lete\x12\x15.DeleteProductRequest\x1a\x10.ProductResponse\"\x00\x12&\n\x06update\x12\x08.Product\x1a\x10.ProductResponse\"\x00\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'inventoryservice_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _PRODUCT._serialized_start=55
-  _PRODUCT._serialized_end=114
-  _PRODUCTLISTREQUEST._serialized_start=116
-  _PRODUCTLISTREQUEST._serialized_end=136
-  _PRODUCTRETRIEVEREQUEST._serialized_start=138
-  _PRODUCTRETRIEVEREQUEST._serialized_end=183
-  _INVENTORYSERVICE._serialized_start=186
-  _INVENTORYSERVICE._serialized_end=414
+  _PRODUCT._serialized_start=26
+  _PRODUCT._serialized_end=99
+  _ADDPRODUCTREQUEST._serialized_start=101
+  _ADDPRODUCTREQUEST._serialized_end=164
+  _GETALLPRODUCTSREQUEST._serialized_start=166
+  _GETALLPRODUCTSREQUEST._serialized_end=189
+  _PRODUCTRESPONSE._serialized_start=191
+  _PRODUCTRESPONSE._serialized_end=248
+  _GETPRODUCTREQUEST._serialized_start=250
+  _GETPRODUCTREQUEST._serialized_end=289
+  _DELETEPRODUCTREQUEST._serialized_start=291
+  _DELETEPRODUCTREQUEST._serialized_end=333
+  _INVENTORYSERVICE._serialized_start=336
+  _INVENTORYSERVICE._serialized_end=573
 # @@protoc_insertion_point(module_scope)

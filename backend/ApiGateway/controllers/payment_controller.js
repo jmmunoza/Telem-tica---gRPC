@@ -17,8 +17,28 @@ const package_definition = protoLoader.loadSync(
 const payment_service = grpc.loadPackageDefinition(package_definition).PaymentService;
 const client = new payment_service(PAYMENT_SERVICE_ADDRESS, grpc.credentials.createInsecure());
 
-exports.payorder = (req, res) => {
+exports.payOrder = (req, res) => {
     client.payOrder(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
+};
+
+exports.addMoney = (req, res) => {
+    client.addMoney(req.body, (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+            res.json(data);
+		}
+	});
+};
+
+exports.createUser = (req, res) => {
+    client.createUser(req.body, (err, data) => {
 		if (err) {
 			console.log(err);
 		} else {

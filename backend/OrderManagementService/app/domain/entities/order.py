@@ -12,3 +12,10 @@ class Order:
 
     def getAmount(self):
         return self._amount
+    
+    def __str__(self) -> str:
+        return str({
+            'order_id': self.getId(),
+            'product_id': self.getProductId(),
+            'amount': self.getAmount()
+        })

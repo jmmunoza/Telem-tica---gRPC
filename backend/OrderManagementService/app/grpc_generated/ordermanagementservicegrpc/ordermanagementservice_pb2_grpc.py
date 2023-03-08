@@ -2,7 +2,6 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import app.grpc_generated.ordermanagementservicegrpc.ordermanagementservice_pb2 as ordermanagementservice__pb2
 
 
@@ -15,32 +14,37 @@ class OrderManagementServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.add = channel.unary_unary(
-                '/OrderManagementService/add',
-                request_serializer=ordermanagementservice__pb2.Order.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        self.getAll = channel.unary_stream(
+                '/OrderManagementService/getAll',
+                request_serializer=ordermanagementservice__pb2.GetAllOrdersRequest.SerializeToString,
+                response_deserializer=ordermanagementservice__pb2.Order.FromString,
                 )
         self.get = channel.unary_unary(
                 '/OrderManagementService/get',
-                request_serializer=ordermanagementservice__pb2.OrderRetrieveRequest.SerializeToString,
+                request_serializer=ordermanagementservice__pb2.OrderRequest.SerializeToString,
                 response_deserializer=ordermanagementservice__pb2.Order.FromString,
                 )
-        self.update = channel.unary_unary(
-                '/OrderManagementService/update',
-                request_serializer=ordermanagementservice__pb2.Order.SerializeToString,
+        self.create = channel.unary_unary(
+                '/OrderManagementService/create',
+                request_serializer=ordermanagementservice__pb2.CreateOrderRequest.SerializeToString,
                 response_deserializer=ordermanagementservice__pb2.Order.FromString,
                 )
-        self.delete = channel.unary_unary(
-                '/OrderManagementService/delete',
-                request_serializer=ordermanagementservice__pb2.Order.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        self.cancel = channel.unary_unary(
+                '/OrderManagementService/cancel',
+                request_serializer=ordermanagementservice__pb2.OrderRequest.SerializeToString,
+                response_deserializer=ordermanagementservice__pb2.OrderResponse.FromString,
+                )
+        self.complete = channel.unary_unary(
+                '/OrderManagementService/complete',
+                request_serializer=ordermanagementservice__pb2.OrderRequest.SerializeToString,
+                response_deserializer=ordermanagementservice__pb2.OrderResponse.FromString,
                 )
 
 
 class OrderManagementServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def add(self, request, context):
+    def getAll(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -52,13 +56,19 @@ class OrderManagementServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def update(self, request, context):
+    def create(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def delete(self, request, context):
+    def cancel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def complete(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -67,25 +77,30 @@ class OrderManagementServiceServicer(object):
 
 def add_OrderManagementServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'add': grpc.unary_unary_rpc_method_handler(
-                    servicer.add,
-                    request_deserializer=ordermanagementservice__pb2.Order.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            'getAll': grpc.unary_stream_rpc_method_handler(
+                    servicer.getAll,
+                    request_deserializer=ordermanagementservice__pb2.GetAllOrdersRequest.FromString,
+                    response_serializer=ordermanagementservice__pb2.Order.SerializeToString,
             ),
             'get': grpc.unary_unary_rpc_method_handler(
                     servicer.get,
-                    request_deserializer=ordermanagementservice__pb2.OrderRetrieveRequest.FromString,
+                    request_deserializer=ordermanagementservice__pb2.OrderRequest.FromString,
                     response_serializer=ordermanagementservice__pb2.Order.SerializeToString,
             ),
-            'update': grpc.unary_unary_rpc_method_handler(
-                    servicer.update,
-                    request_deserializer=ordermanagementservice__pb2.Order.FromString,
+            'create': grpc.unary_unary_rpc_method_handler(
+                    servicer.create,
+                    request_deserializer=ordermanagementservice__pb2.CreateOrderRequest.FromString,
                     response_serializer=ordermanagementservice__pb2.Order.SerializeToString,
             ),
-            'delete': grpc.unary_unary_rpc_method_handler(
-                    servicer.delete,
-                    request_deserializer=ordermanagementservice__pb2.Order.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            'cancel': grpc.unary_unary_rpc_method_handler(
+                    servicer.cancel,
+                    request_deserializer=ordermanagementservice__pb2.OrderRequest.FromString,
+                    response_serializer=ordermanagementservice__pb2.OrderResponse.SerializeToString,
+            ),
+            'complete': grpc.unary_unary_rpc_method_handler(
+                    servicer.complete,
+                    request_deserializer=ordermanagementservice__pb2.OrderRequest.FromString,
+                    response_serializer=ordermanagementservice__pb2.OrderResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -98,7 +113,7 @@ class OrderManagementService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def add(request,
+    def getAll(request,
             target,
             options=(),
             channel_credentials=None,
@@ -108,9 +123,9 @@ class OrderManagementService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/add',
-            ordermanagementservice__pb2.Order.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        return grpc.experimental.unary_stream(request, target, '/OrderManagementService/getAll',
+            ordermanagementservice__pb2.GetAllOrdersRequest.SerializeToString,
+            ordermanagementservice__pb2.Order.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -126,13 +141,13 @@ class OrderManagementService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/OrderManagementService/get',
-            ordermanagementservice__pb2.OrderRetrieveRequest.SerializeToString,
+            ordermanagementservice__pb2.OrderRequest.SerializeToString,
             ordermanagementservice__pb2.Order.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def update(request,
+    def create(request,
             target,
             options=(),
             channel_credentials=None,
@@ -142,14 +157,14 @@ class OrderManagementService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/update',
-            ordermanagementservice__pb2.Order.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/create',
+            ordermanagementservice__pb2.CreateOrderRequest.SerializeToString,
             ordermanagementservice__pb2.Order.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def delete(request,
+    def cancel(request,
             target,
             options=(),
             channel_credentials=None,
@@ -159,8 +174,25 @@ class OrderManagementService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/delete',
-            ordermanagementservice__pb2.Order.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/cancel',
+            ordermanagementservice__pb2.OrderRequest.SerializeToString,
+            ordermanagementservice__pb2.OrderResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def complete(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/OrderManagementService/complete',
+            ordermanagementservice__pb2.OrderRequest.SerializeToString,
+            ordermanagementservice__pb2.OrderResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

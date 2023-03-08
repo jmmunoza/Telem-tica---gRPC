@@ -11,20 +11,25 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1cordermanagementservice.proto\x1a\x1bgoogle/protobuf/empty.proto\">\n\x05Order\x12\x10\n\x08order_id\x18\x01 \x01(\x05\x12\x13\n\x0bprodutct_id\x18\x02 \x01(\x05\x12\x0e\n\x06\x61mount\x18\x03 \x01(\x05\"(\n\x14OrderRetrieveRequest\x12\x10\n\x08order_id\x18\x01 \x01(\x05\x32\xb1\x01\n\x16OrderManagementService\x12\'\n\x03\x61\x64\x64\x12\x06.Order\x1a\x16.google.protobuf.Empty\"\x00\x12&\n\x03get\x12\x15.OrderRetrieveRequest\x1a\x06.Order\"\x00\x12\x1a\n\x06update\x12\x06.Order\x1a\x06.Order\"\x00\x12*\n\x06\x64\x65lete\x12\x06.Order\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1cordermanagementservice.proto\"=\n\x05Order\x12\x10\n\x08order_id\x18\x01 \x01(\t\x12\x12\n\nproduct_id\x18\x02 \x01(\t\x12\x0e\n\x06\x61mount\x18\x03 \x01(\x05\"\x15\n\x13GetAllOrdersRequest\"8\n\x12\x43reateOrderRequest\x12\x12\n\nproduct_id\x18\x01 \x01(\t\x12\x0e\n\x06\x61mount\x18\x02 \x01(\x05\"7\n\rOrderResponse\x12\x15\n\ris_successful\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\" \n\x0cOrderRequest\x12\x10\n\x08order_id\x18\x01 \x01(\t2\xe5\x01\n\x16OrderManagementService\x12*\n\x06getAll\x12\x14.GetAllOrdersRequest\x1a\x06.Order\"\x00\x30\x01\x12\x1e\n\x03get\x12\r.OrderRequest\x1a\x06.Order\"\x00\x12\'\n\x06\x63reate\x12\x13.CreateOrderRequest\x1a\x06.Order\"\x00\x12)\n\x06\x63\x61ncel\x12\r.OrderRequest\x1a\x0e.OrderResponse\"\x00\x12+\n\x08\x63omplete\x12\r.OrderRequest\x1a\x0e.OrderResponse\"\x00\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ordermanagementservice_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _ORDER._serialized_start=61
-  _ORDER._serialized_end=123
-  _ORDERRETRIEVEREQUEST._serialized_start=125
-  _ORDERRETRIEVEREQUEST._serialized_end=165
-  _ORDERMANAGEMENTSERVICE._serialized_start=168
-  _ORDERMANAGEMENTSERVICE._serialized_end=345
+  _ORDER._serialized_start=32
+  _ORDER._serialized_end=93
+  _GETALLORDERSREQUEST._serialized_start=95
+  _GETALLORDERSREQUEST._serialized_end=116
+  _CREATEORDERREQUEST._serialized_start=118
+  _CREATEORDERREQUEST._serialized_end=174
+  _ORDERRESPONSE._serialized_start=176
+  _ORDERRESPONSE._serialized_end=231
+  _ORDERREQUEST._serialized_start=233
+  _ORDERREQUEST._serialized_end=265
+  _ORDERMANAGEMENTSERVICE._serialized_start=268
+  _ORDERMANAGEMENTSERVICE._serialized_end=497
 # @@protoc_insertion_point(module_scope)
