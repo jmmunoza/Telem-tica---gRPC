@@ -3,21 +3,28 @@
 
 **Tabla de Contenido**
 
-1. [Arquitectura](#introduction)
+1. [Arquitectura](#arquitectura)
 2. [Microservicio de Inventario](#inventario)
 3. [Microservicio de Órdenes](#orden)
 4. [Microservicio de Pago](#pago) 
-5. [Despliegue](#deployment) <br>
+5. [Api](#api) 
+6. [Ejecución](#ejecution)
+7. [Ejemplos](#ejemplos)<br>
 
 *******
 
-<div id='introduction'/> 
+<div id='arquitectura'/> 
 
 ### **1. Arquitectura**
+![Microservices](https://user-images.githubusercontent.com/69641274/224455152-7805b0e0-3d49-4ba9-9d97-5ec5d2d6b5f2.jpg)
 
-En este laboratorio vamos a desarrollar habilidades básicas en los aspectos de programación distribuida relacionados con  la comunicación de procesos remotos utilizando gRCP. 
+Antes de comenzar a hablar de cada uno de los componentes en específico, es necesario echar un vistazo general de todo el sistema. Lo primero que se notan son dos enormes cajas: Client side y Backend side.
 
-Para esto, se presenta un ejemplo de dos procesos, uno construido en python y el otro en node.js, con el fin de que estos se comuniquen utilizando gRPC. La definición de la interfaz del servicio se realiza empleando protocol buffers
+Por el lado de Client Side, se trata del entorno en el cual el cliente interactúa con la solución. En esta solución solamente requiere de un computador, ya sea de escritorio o portatil, y el aplicativo Postman. Postman será el intermediario entre el usuario y el sistema, ya que este brinda gran variedad de peticiones HTTP como GET, POST, PUT, DELETE, entre muchas otras, algo que no ofrece un Browser convencional, el cual solamente provee las peticiones GET. Cabe recalcar que Postman no es la única solución, existe gran cantidad de herramientas similares como Thunder Client (extensión de VSCode) o Katalon Studio. Postman envia sus peticiones HTTP por medio de Internet y llegan hasta el API que permite redireccionar dichas peticiones hasta cada uno de los microservicios.
+
+Por el lado de Backed Side, se trata de todo el gran sistema en sí. Aquí se encuentran los tres microservicios y el API que permite la conexión a estos por parte del usario. De forma práctica, cada uno de estos componentes se trata de un aplicativo de software. Cada una de estas piezas de código se encuentran ejecutando en 4 máquinas virtuales distintas. El elegido para proveer dichas máquinas se trata de Amazon Web Services, medianete su servicio de máquina EC2. Los componentes al interior se comunican todos por medio de gRPC, el cual está soportado sobre HTTP2. Como se puede ver, los componentes se encuentran interconectados entre sí, pero no de forma bidireccional. Esta bidireccionalidad será explicada a fondo más abajo.
+
+Puede que el lector se esté cuestionando la falta de un componente de Frontend Side. Este, por motivos prácticos, ha sido descartado en la implementación del proyecto debido a que no se ajusta con los objetivos del reto. 
 
 
 *******
@@ -26,11 +33,17 @@ Para esto, se presenta un ejemplo de dos procesos, uno construido en python y el
 
 ### **2. Microservicio de Inventario**
 
-La comunicación entre procesos distribuidos tradicionalmente se soporta sobre el paso de mensajes. En la actualidad, uno de los mecanismos que se emplea es gRPC. Acorde con (https://grpc.io/), gRPC es un framework open-source, moderno y eficiente que permite la comunicación entre procesos distribuidos. De esta forma, es posible conectar, invocar así como operar dos o mas procesos distribuidos, tal como si estuvieramos empleando llamadas a funciones de manera local. El protocolo de transporte para la comunicación gRPC es HTTP/2.
+El servicio de inventario alberga todos los productos que el usuario podrá ver y comprar. El servicio ofrece la posibilidad de añadir un producto (add()), obtener uno por medio de su ID (get()), eliminar uno por medio de su ID (get()), actualizar uno (update()) u obtener todos los productos disponibles en la "base de datos".
+Un producto cuenta con los siguientes atributos:
+* Nombre
+* Identificador
+* Precio
+* Stock
 
-De esta forma, al momento de empezar a desarrollar una aplicación con RPCs (y gRCP no es la excepción), lo primero que hay que hacer es realizar la definición de una interfaz de servicio. En esta, lo que se especifica es como la funcionalidad del servicio que estamos exponiendo debe ser consumido. En dicha interfaz, aspectos como que métodos puede ser consumidos remotamente, los parámetros así como el formato de mensajes requeridos para invocar dichos métodos, son definidos. 
+Este servicio se encuentra implementado en Python y se encuentra ligado a los demás componentes, aunque este no se puede comunicar directamente a ellos. No puede enviar solicitudes a Órdenes o a Pagos. El servicio no cuenta con una base de datos, pero si hace una simulación de esta con datos en memoria. La desventaja es que cada vez que se cierra el proceso, se reinician los valores a cero.
 
-Para el caso particular de gRPC, el lenguaje de definición de interfaz (IDL), se denomina Protocol Buffers (https://protobuf.dev/). Este IDL es una plataforma agnóstica que no depende del sistema operativo o lenguaje de programación y que permite la serialización de datos estructurados. En la actualidad, se puede trabajar con diferentes tipos de lenguajes de programación, como Java, Python, C++, Go, etc. 
+A continuación, su archivo .proto:
+
 ```js
 syntax = "proto3";
 
@@ -78,7 +91,15 @@ message DeleteProductRequest {
 
 ### **3. Microservicio de Órdenes**
 
-Para el desarrollo de este laboratorio se utilizaran dos lenguajes de programación: pythoy y node.js. Igaulmete, se desplegará dos instancias en AWS, una para cada servicio.
+El servicio de órdenes es hasta cierto grado similar al de inventario. Puedes crear órdenes (create()), obtener una orden (get()), obtener todas (getAll()), cancelarla (cancel()) o completarla (complete()). Una orden se compone de los siguientes atributos.
+
+* Identificador de la orden
+* Identificador del producto a comprar
+* Cantidad de productos a comprar
+
+El servicio se encuentra igualmente programado en Python. Este se puede comunicar al servicio de inventario para hacer uso principalmente de las funciones get() y delete(). Al igual que como pasa con todos los servicios, la base de datos es inexistente. Solamente hay datos en memoria que se pierden cada vez que se para la ejecución del programa.
+
+Este es el archivo .proto de órdenes:
 
 ```js
 syntax = "proto3";
@@ -121,7 +142,21 @@ message OrderRequest {
 
 ### **4. Microservicio de Pago**
 
-En las siguientes subsecciones se describen el conjunto de pasos que se requieren para el desarrollo de la actividad.
+El servicio de pagos, el más complejo de todos, se trata de una simulación de pasarela de pagos en donde el usuario paga y completa así sus órdenes. Con el servicio puedes crear un usuario (createUser), añadir fondos a su cuenta (addMoney()), obtener al usuario (getUser()) o pagar una orden (payOrder()).
+
+Por un lado, el usuario se compone de los siguientes atributos:
+* Identificador
+* Nombre
+* Fondos en la cuenta
+
+Por el otro, un pago cuenta con los siguientes atributos:
+* Identificador de la orden
+* Identificador del usuario
+* Monto del pago
+
+Este servicio se encuentra desarrollado en NodeJS y tampoco cuenta con base de datos. Hace uso tanto de los servicios de inventario, para obtener productos, como de orden, para obtener y completar ordenes.
+
+A continuación, el archivo .proto:
 
 ```js
 syntax = "proto3";
@@ -164,216 +199,384 @@ message UserRequest {
 }
 ```
 
-#### **4.1. Alcance:**
+*******
 
-A continuación, en la figura 1, se presenta la arquitectura que se va implementar en este laboratorio. Como se puede observar, se van a implementar dos servicios, los cuales estan desarrollados en lenguajes de programación diferentes: python y node.js. 
+<div id='api'/>  
 
-De esta forma, ambos servicios se podrán comunicar entre sí utilizando gRPC. Para lograr esto, se requiere la definición de un la interfaz de servicio así como la códificación de cada uno de los servicios en cada uno de los lenguajes.
+### **5. API**
 
-![Arquitectura a Desplegar](./back/img/img_architecture.png)
+La API, el intermediario entre el usuario y los servicios. Esta se encuentra desarrollada en NodeJS y hace uso de Express para poder hacer el enrutamientos de las solicitudes y convertirlas de HTTP a un llamado de método remoto con gRPC y HTTP2.
 
-<div id='instance'/> 
+Este componente tiene acceso a los tres microservicios, pero estos no pueden hacer uso de esta. Para el enrutamiento, se cuentan con tres secciones:
+* /inventory para el servicio de inventario
+* /orders para el servicio de órdenes
+* /payment para el servicio de pagos
 
-#### **4.2. Estructura del Proyecto:**
 
-En este repositorio, va a encontrar la siguiente estructura para el proyecto:
+#### **5.1. Métodos de inventario:**
+Para hacer uso de los métodos del servicio de inventario, se cuentan con las siguientes rutas
 
-* La carpeta "Back" contiene la definición de cada una de las carpetas para cada servicio.
-* Una carpeta img, para las diferentes imágenes que componen este proyecto.
-* Un archivo README.md a maner de documentación de este proyecto así como de guía de este laboratorio.
-
-#### **4.3. Definición la Interfaz del Servicio:**
-
-Para la definición de la interfaz del servicio, como se mencionó anteriormente, se utilizará el lenguaje de definición de interfaz (IDL): Protocol Buffers. 
-
-Es así como se definirá un archivo Servicio.proto, el cual contiene la definición del esquema de los datos estructurados que se quieren serializar.
-
-```js
-syntax = "proto3";
-message Product{
-    int32 id_product = 1;
-}
-message TransactionResponse{
-    int32 status_code = 1;
-}
-service ProductService{
-    rpc AddProduct(Product) returns (TransactionResponse) {}
-}
-```
-
-Del código anterior, se observa lo siguiente: 
-
-* La etiqueta "syntax" nos indica que la versión de protocol buffers que se está empleado es "proto3". 
-* Se definen dos mensajes: Product y TransactionResponse. El mensaje "Product" tiene un solo atributo que es "id_product" y es definido del tipo entero. Para el caso del mensaje "TransactionResponse", este tiene un atributo denominado "status_code" igualmente del tipo entero.
-* Se observa la definición de un servicio "ProductService", para esto se especifíca con la expresión "service" en el archivo .proto. Luego, como se puede observar, se define el método RPC al interior de la definición el servicio. Note que se especifica tanto la petición como la respuesta. Para el caso particular de este ejemplo, se específica el método "AddProduct(Product)", el cual recibe el mensaje "Product" y el método retorna como respuesta el mensaje "TransactionResponse".
-* Todo lo antes mencionado, se convierte en la definición del contrato de interfaz (API) para el consumo de diferentes servicios remotos.
-
-De esta forma, es posible serializar un objeto desde el servicio 1, el cual está escrito en un lenguaje de programación como node.js, enviarlo sobre una red de datos, y deserializarlo en el servicio 2, el cual está escrito en un lenguaje de programación como python. 
-
-#### **4.4. Servicio 1 en Node.js:**
-
-El servicio 1 esta desarrollado en node.js como entorno de ejecución. En el proyecto se encuentra el archivo "server.js", el cual tiene la implementación del código (cliente para este caso) que hace una llamada a un procedimiento remoto ubicado en otro servidor. De esta forma "node.js" genera el client stub así como los descriptores de los servicios a consumir. Todo esto en tiempo de ejecución. Para esto, se requiere cargar el archivo "Servicio.proto" (definición del servicio) el cual esta en la carpeta "protobufs".
-
-En el caso particular de node.js, se requiere para el proyecto importar las librerias '@grpc/grpc-js' y '@grpc/proto-loader'. Igualmente, se le especifica la ruta donde se encuentra la definición del servicio (Servicio.proto) la cual se almacena en la variable "PROTO_PATH".
-
-```js
-import dotenv from 'dotenv';
-import grpc from '@grpc/grpc-js';
-import protoLoader from '@grpc/proto-loader';
-dotenv.config()
-const PROTO_PATH = process.env.PROTO_PATH;
-const REMOTE_HOST = process.env.REMOTE_HOST;
-const packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {keepCase: true,
-     longs: String,
-     enums: String,
-     defaults: true,
-     oneofs: true
-    });
-```
-
-A partir de esto, se procede a crear el "client stub": 
- 
-```js
-const client = new productService(REMOTE_HOST,grpc.credentials.createInsecure());
-```
-
-donde "REMOTE_HOST" indica la localización del servicio remoto (IP:PORT). 
-
-Una vez creado el "client stub" procedemos desde éste a invocar la llamada al procedimiento remoto con:
-
-```js
-  client.AddProduct({id_product: idProduct}, (err, data) => {
-    if(err){
-      console.log(err);   // Se procesa y visualiza por consola el error.
-    } else {
-      console.log('Response received from remote service:', data); // Se procesa y visualiza el mensaje de respuesta recibido.
-    }
-   });
-```
-Es así como que del fragmento de código anterior, se visualiza que el procedimiento remoto (AddProduct) se llama desde el cliente y se pasa el parámetro del producto que se requiere adicionar, en este caso "id_product". Como se puede observar, en caso tal la llamada al procedimiento remoto se exitoso, se imprime la respuesta por consola, en caso contrario, se procesa el error. Se puede notar, que estas llamadas son asincrónicas e implementan "callbacks" para recibir los resultados a la llamada.
-
-#### **4.5. Servicio 2 en Python:**
-
-El servicio 2 de este ejemplo está desarrollado en Python. Al igual que para el caso del primer servicio el cual fue implementado en node.js, lo primero que hay que hacer es obtener la definición del servicio. Para esto, puede observar, que en la carpeta "protobufs", se encuentra el archivo "Servico.proto". 
-
-En la carpeta "src", se puede visualizar el archivo server.py. Al analizar el código, se puede observar que la función server() es llamada desde la función main(). 
-
-```python
-def serve():
-  server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-  Service_pb2_grpc.add_ProductServiceServicer_to_server(ProductService(), server)
-  server.add_insecure_port('[::]:8080')
-  print("Service is running... ")
-  server.start()
-  server.wait_for_termination()
-```
-En dicha función, la expresión grpc.server nos permite crear el servidor con el máximo número de hilos (worker) como parámetro. Posterior, lo siguiente es proceder a registrar/asociar la clase "ProductService()" con el servidor. Aqui se lanza el servicio corriendo el puerto especificado y se inicia el servicio como el método start().
-
-#### **5 Despliegude de los Servicios:**
-
-En esta sección crearemos dos instancias EC2 en AWS, las cuales nos permitirán desplegar y ejectuar cada uno de los dos servicios desarrollados. Recuerde que, para caso de este laboratorio, ambas VMs estaran asociadas a VPC por defecto. Diríjase al “home” de la consola de administración de AWS. Escoja el servicio de EC2. En el panel izquierdo seleccione la opción de “Instances” seleccione la opción “launch instances” y ejecute lo siguientes pasos:
-
-* **Name and Tags:**
-    * Name: vm-Service.
-* **Application and OS Images (Amazon machine image)**
-    * Escoja la imagen de Amazon Machine Image (AMI) la cual contiene la imagen del sistema operativo. Seleccione Ubuntu server 20.04 LTS (HVM), SSD Volume Type. Free Tier.
-* **Instance type:** Seleccione el tipo de instancia t2.micro (columna type) 
-* **Key pair (login):** Seleccione una llave existente o en su defecto cree una nueva.
-* **Network Settings:** Ahora configure, los siguientes parámetros (click en edit):
-    * **Network:** Seleccione la VPC que esta por defecto.
-    * **Subnet:** No preference (Default subnet in any availability zone)
-    * **Auto-assign Public IP:** Enable
-    * **Firewall (security groups):**
-        * Seleccione la opción de “create security group” 
-        * Active las casillas para el tráfico SSH y HTTP.Permita que reciban peticiones de cualquier dirección. 
-        * **Nota:** Para el caso de ssh, recuerde que posteriormente puede modificar el security group para permitir solo conexiones desde la dirección IP que usted indique.
-* **Configure storage:** 1 x 8 Gib gp2 root volume 
-
-En la parte final de este proceso, seleccione crear dos instancias. Una vez las dos máquinas estén creadas, proceda a modificar el nombre de cada una de las instancias en el menú: vm-Service1 y vm-Service2.
-
-Ahora vamos a proceder a conectarnos a la máquina creada de la siguiente forma:
-
-* En una terminal de consola desde su máquina, inicie una sesión ssh contra el servidor que configuro. Recuerde, que en caso de ser necesario, antes, debe cambiar los permisos del archivo .pem que creo. Para esto aplique el comando: 
+* **get():** para llamar a este método se hace por medio del método HTTP GET y de la ruta:
 
 ```sh
-ubuntu@dirIP $ chmod 400 ST0255.pem
+ /inventory/get/{identificador}
 ```
 
-#### **5.2. Instalación de Servicio 2 en Python :**
+* **getAll():** para llamar a este método se hace por medio del método HTTP GET y de la ruta:
 
-En esta sección vamos a proceder a instalar las dependencias necesarias para poder ejecutar nuestro servicio 2 en python. Se debe garantizar que se cuente con una versión de python igual o superior a 3.7 así como una versión de pip igual o superior a 9.0.1.
+```sh
+ /inventory/getall
+```
 
-Antes que todo, actualice 
+* **add():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /inventory/add/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "name" : "Hammer",
+    "price" : 215.5,
+    "stock": 3
+}
+```
+El método retornará un JSON similar, pero con un campo adicional, el identificador del producto.
+
+* **delete():** para llamar a este método se hace por medio del método HTTP DELETE y de la ruta:
+```sh
+ /inventory/delete/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "product_id" : "3afa59c7-a390-4b32-ad36-d625d92ed418"
+}
+```
+El método retornará un JSON similar al siguiente en caso de éxito.
+
+```js
+{
+    "is_successful" : true,
+    "message" : "The product was deleted successfully"
+}
+```
+En caso de error, se retornará el siguiente JSON.
+
+```js
+{
+    "is_successful" : false,
+    "message" : "There was an error"
+}
+```
+
+
+* **update():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /inventory/update/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "product_id" : "3afa59c7-a390-4b32-ad36-d625d92ed418",
+    "name" : "Hammer",
+    "price" : 24.5,
+    "stock": 3
+}
+```
+
+El método buscará el producto con el mismo identificador y los actualizará. Posteriormente, retornará un JSON similar al siguiente en caso de éxito.
+
+```js
+{
+    "is_successful" : true,
+    "message" : "The product was updated successfully"
+}
+```
+En caso de error, se retornará el siguiente JSON.
+
+```js
+{
+    "is_successful" : false,
+    "message" : "There was an error"
+}
+```
+
+#### **5.2. Métodos de órdenes:**
+Para hacer uso de los métodos del servicio de órdenes, se cuentan con las siguientes rutas
+
+* **get():** para llamar a este método se hace por medio del método HTTP GET y de la ruta:
+
+```sh
+ /orders/get/{identificador}
+```
+
+* **getAll():** para llamar a este método se hace por medio del método HTTP GET y de la ruta:
+
+```sh
+ /orders/getall
+```
+
+* **create():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /orders/create/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "product_id" : "3afa59c7-a390-4b32-ad36-d625d92ed418",
+    "amount" : 45
+}
+```
+
+El método retornará un JSON similar, pero con un campo adicional, el identificador de la orden.
+
+* **cancel():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /orders/cancel/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "order_id" : "85d8ec54-784b-4b0a-8ebb-29174bb72210",
+}
+```
+
+El método buscará el producto con el mismo identificador y los eliminará. Posteriormente, retornará un JSON similar al siguiente en caso de éxito.
+
+```js
+{
+    "is_successful" : true,
+    "message" : "The order was cancelled successfully"
+}
+```
+En caso de error, se retornará el siguiente JSON.
+
+```js
+{
+    "is_successful" : false,
+    "message" : "There was an error"
+}
+```
+
+* **complete():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /orders/complete/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "order_id" : "85d8ec54-784b-4b0a-8ebb-29174bb72210",
+}
+```
+
+El método buscará el producto con el mismo identificador y los eliminará, y de paso descontará el stock del producto asociado haciendo uso del servicio de inventarios (aunque esta última parte no fue implementada por temas de tiempo, solamente elimina la orden). Posteriormente, retornará un JSON similar al siguiente en caso de éxito.
+
+```js
+{
+    "is_successful" : true,
+    "message" : "The order was completed successfully"
+}
+```
+En caso de error, se retornará el siguiente JSON.
+
+```js
+{
+    "is_successful" : false,
+    "message" : "There was an error"
+}
+```
+
+#### **5.3. Métodos de pago:**
+Para hacer uso de los métodos del servicio de pago, se cuentan con las siguientes rutas
+
+* **createUser():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /payment/createuser/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "name" : "Juan Manuel",
+}
+```
+
+El método retornará un JSON similar, pero con dos campos adicionales, el identificador del usuario y sus fondos.
+```js
+{
+    "user_id" : "c24c4391-83a6-4805-9e58-9007795a4cfd":,
+    "name" : "Juan Manuel",
+    "balance" : 0
+}
+```
+
+* **addMoney():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /payment/addmoney/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "user_id" : "Juan Manuel",
+    "amount": 15004.5
+}
+```
+
+El método retornará un mensaje de confirmación en caso de que el proceso sea exitoso.
+
+```js
+{
+    "is_successful" : true,
+    "message" : "Money added successfully"
+}
+```
+En caso de error, se retornará el siguiente JSON.
+
+```js
+{
+    "is_successful" : false,
+    "message" : "There was an error"
+}
+```
+
+* **getUser():** para llamar a este método se hace por medio del método HTTP GET y de la ruta:
+
+```sh
+ /payment/getuser/{identificador}
+```
+
+* **payOrder():** para llamar a este método se hace por medio del método HTTP POST y de la ruta:
+```sh
+ /payment/payorder/
+```
+
+El body de la solicitud es el siguiente:
+```js
+{
+    "order_id" : "85d8ec54-784b-4b0a-8ebb-29174bb72210",
+    "user_id" : "c24c4391-83a6-4805-9e58-9007795a4cfd",
+    "amount" : 14999.9
+}
+```
+
+El método retornará un mensaje de confirmación en caso de que el proceso sea exitoso.
+
+```js
+{
+    "is_successful" : true,
+    "message" : "Money added successfully"
+}
+```
+En caso de error, que se puede dar porque el stock no es suficiente o el monto de dinero es innecesario (es por esto que pagos llama a inventario y ordenes), se retornará un JSON con el mensaje de error específico.
+
+```js
+{
+    "is_successful" : false,
+    "message" : "There was an error"
+}
+```
+
+*******
+
+<div id='ejecution'/>  
+
+### **6. Ejecución**
+
+Cada componente cuenta con una carpeta en donde se encuentra un archivo main.py o main.js, el cual es el que se ejecuta para correr cada servidor. Para ser capaz de ejecutar todo, se requiere instalar librerías para permitir la ejecución de Python y NodeJS en la máquina.
+
+Lo principal, lo que debe correrse siempre en un inicio.
 
 ```sh
  $ sudo apt-get update
  $ sudo apt-get upgrade
 ```
 
-Ahora proceda a instalar python3 así como actualizad pip:
+Ahora es necesario instalar Python y pip.
 
 ```sh
  $ sudo apt-get install python3
  $ sudo apt-get install python3-pip
 ```
 
-Instale las librerias requeridas para gRPC:
+Instale las librerias requeridas para gRPC y dotenv.
 
 ```sh
-$ sudo python3 -m pip install grpcio
-$ sudo python3 -m pip install grpcio-tools
+ $ sudo python3 -m pip install grpcio
+ $ sudo python3 -m pip install grpcio-tools
+ $ sudo python3 -m pip install dotenv
 ```
 
-Ahora, se clona el repositorio donde está el código:
-
-```sh
-$ sudo git clone https://github.com/ST0263/st0263-2023-1.git 
-```
-
-Particularmente, para el caso de python, se hace necesario generar las interfaces a partir de la deinifición del archivo "Service.proto" y a diferencia de node.js, esto no se hace en tiempo de ejecución. Para esto, se hace necesario estar en el directorio "src" de la carpeta "PaymentService" y ejecutar el siguiente comando:
-
-```sh
- $ sudo python3 -m grpc_tools.protoc -I ../protobufs --python_out=. --pyi_out=. --grpc_python_out=. ../protobufs/Service.proto
-```
-
-Como se puede observar, se generaron tres archivos. Ahora puede proceder a ejecutar el servicio de la siguiente forma:
-
-```sh
-$ sudo python3 server.py
-```
-#### **5.2. Instalación de Servicio 1 en Node.js :**
-
-En esta sección vamos a proceder a instalar las dependencias necesarias para poder ejecutar nuestro servicio 1 en node.js. Se debe garantizar que se cuente con una versión de node igual o superior a 18.X.
-
-Antes que todo, actualice el sistema operativo de la máquina:
-
-```sh
- $ sudo apt-get update
- $ sudo apt-get upgrade
-```
-Ahora se procede a instalar la versión de Node.js v19.X:
+Para instalar NodeJS.
 
 ```sh
 $ sudo curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - && sudo apt-get install -y nodejs
 ```
-Ahora, se clona el repositorio donde está el código:
+
+Ahora el entorno está preparado para ser ejecutado. Para correr códigos de Python se llama al siguiente comando.
 
 ```sh
-$ sudo git clone https://github.com/ST0263/st0263-2023-1.git 
+$ sudo python3 main.py
 ```
-Localizados en el directorio "src" de la carpeta "OnlineService", modifique el archvo ".env de la siguiente forma:
+
+Para correr los códigos de NodeJS se llama al siguiente comando.
 
 ```sh
-$ sudo nano .env
-```
-se requiere modificar la variable "REMOTE_HOST" y asignarle la dirección IP pública donde se está ejecutando el servicio2 (servicio en python). Se hace necesario verificar que el la instancia EC2 donde corre el servicio 2 (python), permita el tráfico TCP entrante en el puerto seleccionado (para este caso 8080).
-
-Finalmente, ejecute el servicio de la siguiente forma:
-
-```sh
-$ sudo node server.js
+$ sudo node main.js
 ```
 
 *******
+
+
+<div id='ejemplos'/> 
+
+### **7. Ejemplos**
+
+A continuación, algunas capturas mostrando el funcionamientos de la aplicación.
+
+* Añadiendo un producto
+![image](https://user-images.githubusercontent.com/69641274/224460679-c4d481f5-3e7f-4715-ae7d-c91497b99f35.png)
+
+* Obteniendo todos los productos
+![image](https://user-images.githubusercontent.com/69641274/224460699-fdee196f-c4a8-4035-ae62-56860601ce5c.png)
+
+* Eliminando un producto
+![image](https://user-images.githubusercontent.com/69641274/224460716-3ea9a174-3722-4348-8ffe-c3b016b133b9.png)
+
+* Creando una orden
+![image](https://user-images.githubusercontent.com/69641274/224460737-f44ea071-a8ca-45af-9e9a-a16ef4458ea9.png)
+
+* Obteniendo todas las órdenes
+![image](https://user-images.githubusercontent.com/69641274/224460755-798fb6f3-1ffc-451b-a518-17ed1cc36edf.png)
+
+* Creando un usuario
+![image](https://user-images.githubusercontent.com/69641274/224460769-8b0e24db-15dc-49c8-aa04-8eae38c35a07.png)
+
+* Pagando una orden con dinero insuficiente
+![image](https://user-images.githubusercontent.com/69641274/224460853-c1c20535-26c1-4533-9d57-6e36bc47217d.png)
+
+* Pagando la orden con dinero suficiente
+![image](https://user-images.githubusercontent.com/69641274/224460884-0413692d-1c6f-4118-8453-35a5a31ce392.png)
+
+* Los tres servicios corriendo desde la terminal
+![image](https://user-images.githubusercontent.com/69641274/224461030-0c592e40-5e7e-4cfb-aafd-de8c851aa5eb.png)
+
+
+
+*******
+
+
+
+
+
+
+
+
+
+
