@@ -20,9 +20,9 @@
 
 Antes de comenzar a hablar de cada uno de los componentes en específico, es necesario echar un vistazo general de todo el sistema. Lo primero que se notan son dos enormes cajas: Client side y Backend side.
 
-Por el lado de Client Side, se trata del entorno en el cual el cliente interactúa con la solución. En esta solución solamente requiere de un computador, ya sea de escritorio o portatil, y el aplicativo Postman. Postman será el intermediario entre el usuario y el sistema, ya que este brinda gran variedad de peticiones HTTP como GET, POST, PUT, DELETE, entre muchas otras, algo que no ofrece un Browser convencional, el cual solamente provee las peticiones GET. Cabe recalcar que Postman no es la única solución, existe gran cantidad de herramientas similares como Thunder Client (extensión de VSCode) o Katalon Studio. Postman envia sus peticiones HTTP por medio de Internet y llegan hasta el API que permite redireccionar dichas peticiones hasta cada uno de los microservicios.
+Por el lado de Client Side, se trata del entorno en el cual el cliente interactúa con la solución. En esta solución solamente se requiere de un computador, ya sea de escritorio o portatil, y el aplicativo Postman. Postman será el intermediario entre el usuario y el sistema, ya que este brinda una gran variedad de peticiones HTTP como GET, POST, PUT, DELETE, entre muchas otras, algo que no ofrece un Browser convencional, el cual solamente provee las peticiones GET. Cabe recalcar que Postman no es la única solución, existe gran cantidad de herramientas similares como Thunder Client (extensión de VSCode) o Katalon Studio. Postman envia sus peticiones HTTP por medio de Internet y llegan hasta el API que permite redireccionar dichas peticiones hasta cada uno de los microservicios.
 
-Por el lado de Backed Side, se trata de todo el gran sistema en sí. Aquí se encuentran los tres microservicios y el API que permite la conexión a estos por parte del usario. De forma práctica, cada uno de estos componentes se trata de un aplicativo de software. Cada una de estas piezas de código se encuentran ejecutando en 4 máquinas virtuales distintas. El elegido para proveer dichas máquinas se trata de Amazon Web Services, medianete su servicio de máquina EC2. Los componentes al interior se comunican todos por medio de gRPC, el cual está soportado sobre HTTP2. Como se puede ver, los componentes se encuentran interconectados entre sí, pero no de forma bidireccional. Esta bidireccionalidad será explicada a fondo más abajo.
+Por el lado de Backed Side, se trata de todo el gran sistema en sí. Aquí se encuentran los tres microservicios y el API que permite la conexión a estos por parte del usuario. De forma práctica, cada uno de estos componentes se trata de un aplicativo de software. Cada una de estas piezas de código se encuentran en 4 máquinas virtuales distintas. El elegido para proveer dichas máquinas se trata de Amazon Web Services, medianete su servicio de máquina EC2. Los componentes al interior se comunican por medio de gRPC, el cual está soportado sobre HTTP2. Como se puede ver, los componentes se encuentran interconectados entre sí, pero no de forma bidireccional. Esta bidireccionalidad será explicada a fondo más abajo.
 
 Puede que el lector se esté cuestionando la falta de un componente de Frontend Side. Este, por motivos prácticos, ha sido descartado en la implementación del proyecto debido a que no se ajusta con los objetivos del reto. 
 
@@ -142,7 +142,7 @@ message OrderRequest {
 
 ### **4. Microservicio de Pago**
 
-El servicio de pagos, el más complejo de todos, se trata de una simulación de pasarela de pagos en donde el usuario paga y completa así sus órdenes. Con el servicio puedes crear un usuario (createUser), añadir fondos a su cuenta (addMoney()), obtener al usuario (getUser()) o pagar una orden (payOrder()).
+El servicio de pagos, el más complejo de todos, se trata de una simulación de pasarela de pagos en donde el usuario paga y completa así sus órdenes. Con el servicio puedes crear un usuario (createUser()), añadir fondos a su cuenta (addMoney()), obtener al usuario (getUser()) o pagar una orden (payOrder()).
 
 Por un lado, el usuario se compone de los siguientes atributos:
 * Identificador
@@ -471,7 +471,7 @@ El método retornará un mensaje de confirmación en caso de que el proceso sea 
 ```js
 {
     "is_successful" : true,
-    "message" : "Money added successfully"
+    "message" : "Transaction completed!"
 }
 ```
 En caso de error, que se puede dar porque el stock no es suficiente o el monto de dinero es innecesario (es por esto que pagos llama a inventario y ordenes), se retornará un JSON con el mensaje de error específico.
